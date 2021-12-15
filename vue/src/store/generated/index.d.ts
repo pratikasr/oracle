@@ -1,4 +1,5 @@
 declare const _default: {
+    CosmonautOracleCosmonautOracleBandoracle: (store: any) => void;
     CosmonautOracleCosmonautOracleConsuming: (store: any) => void;
     CosmosCosmosSdkCosmosAuthzV1Beta1: (store: any) => void;
     CosmosCosmosSdkCosmosBankV1Beta1: (store: any) => void;

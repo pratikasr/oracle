@@ -87,6 +87,9 @@ import (
 	"github.com/tendermint/spm/openapiconsole"
 
 	"github.com/cosmonaut/oracle/docs"
+	bandoraclemodule "github.com/cosmonaut/oracle/x/bandoracle"
+	bandoraclemodulekeeper "github.com/cosmonaut/oracle/x/bandoracle/keeper"
+	bandoraclemoduletypes "github.com/cosmonaut/oracle/x/bandoracle/types"
 	consumingmodule "github.com/cosmonaut/oracle/x/consuming"
 	consumingmodulekeeper "github.com/cosmonaut/oracle/x/consuming/keeper"
 	consumingmoduletypes "github.com/cosmonaut/oracle/x/consuming/types"
@@ -209,8 +212,10 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	ScopedConsumingKeeper capabilitykeeper.ScopedKeeper
-	ConsumingKeeper       consumingmodulekeeper.Keeper
+	ScopedConsumingKeeper  capabilitykeeper.ScopedKeeper
+	ConsumingKeeper        consumingmodulekeeper.Keeper
+	ScopedBandoracleKeeper capabilitykeeper.ScopedKeeper
+	BandoracleKeeper       bandoraclemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -245,6 +250,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		consumingmoduletypes.StoreKey,
+		bandoraclemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -355,12 +361,26 @@ func New(
 	)
 	consumingModule := consumingmodule.NewAppModule(appCodec, app.ConsumingKeeper)
 
+	scopedBandoracleKeeper := app.CapabilityKeeper.ScopeToModule(bandoraclemoduletypes.ModuleName)
+	app.ScopedBandoracleKeeper = scopedBandoracleKeeper
+	app.BandoracleKeeper = *bandoraclemodulekeeper.NewKeeper(
+		appCodec,
+		keys[bandoraclemoduletypes.StoreKey],
+		keys[bandoraclemoduletypes.MemStoreKey],
+		app.GetSubspace(bandoraclemoduletypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedBandoracleKeeper,
+	)
+	bandoracleModule := bandoraclemodule.NewAppModule(appCodec, app.BandoracleKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
 	ibcRouter.AddRoute(consumingmoduletypes.ModuleName, consumingModule)
+	ibcRouter.AddRoute(bandoraclemoduletypes.ModuleName, bandoracleModule)
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -395,6 +415,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		consumingModule,
+		bandoracleModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -430,6 +451,7 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		consumingmoduletypes.ModuleName,
+		bandoraclemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -618,6 +640,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(consumingmoduletypes.ModuleName)
+	paramsKeeper.Subspace(bandoraclemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

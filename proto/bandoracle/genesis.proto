@@ -1,0 +1,15 @@
+syntax = "proto3";
+package cosmonaut.oracle.bandoracle;
+
+import "gogoproto/gogo.proto";
+import "bandoracle/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/cosmonaut/oracle/x/bandoracle/types";
+
+// GenesisState defines the bandoracle module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
+  // this line is used by starport scaffolding # genesis/proto/state
+}

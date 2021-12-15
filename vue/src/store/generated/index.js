@@ -1,4 +1,5 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
+import CosmonautOracleCosmonautOracleBandoracle from './cosmonaut/oracle/cosmonaut.oracle.bandoracle';
 import CosmonautOracleCosmonautOracleConsuming from './cosmonaut/oracle/cosmonaut.oracle.consuming';
 import CosmosCosmosSdkCosmosAuthzV1Beta1 from './cosmos/cosmos-sdk/cosmos.authz.v1beta1';
 import CosmosCosmosSdkCosmosBankV1Beta1 from './cosmos/cosmos-sdk/cosmos.bank.v1beta1';
@@ -12,6 +13,7 @@ import CosmosCosmosSdkCosmosStakingV1Beta1 from './cosmos/cosmos-sdk/cosmos.stak
 import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vesting.v1beta1';
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1';
 export default {
+    CosmonautOracleCosmonautOracleBandoracle: load(CosmonautOracleCosmonautOracleBandoracle, 'cosmonaut.oracle.bandoracle'),
     CosmonautOracleCosmonautOracleConsuming: load(CosmonautOracleCosmonautOracleConsuming, 'cosmonaut.oracle.consuming'),
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
     CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),

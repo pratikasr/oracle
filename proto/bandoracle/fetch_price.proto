@@ -1,0 +1,13 @@
+syntax = "proto3";
+package cosmonaut.oracle.bandoracle;
+
+option go_package = "github.com/cosmonaut/oracle/x/bandoracle/types";
+
+message FetchPriceCallData {
+  repeated string symbols = 1;
+  uint64 multiplier = 2;
+}
+
+message FetchPriceResult {
+  repeated uint64 rates = 1;
+}
